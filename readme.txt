@@ -10,13 +10,17 @@ Version 0.1 では，以下のサイトからダウンロードした PDF ファ
  * Springer: http://www.springerlink.com/
  * ACM: http://portal.acm.org/
 
- 将来的には，検索機能を提供する予定です．
+将来的には，検索機能を提供する予定です．
 
 
 
 使い方
 ---------------------------------
 ダウンロードした，ManagementArticlesPlugin.jar を plugin フォルダに追加してください．
+設定ファイルは nor.plugin.ManagementArticles.conf で，設定可能な項目は次の通りです．
+
+ * folder ダウンロードした PDF ファイルの保存先
+
 
 
 ライセンス
