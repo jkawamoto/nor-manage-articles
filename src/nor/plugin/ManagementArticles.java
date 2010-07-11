@@ -41,6 +41,7 @@ import nor.http.HeaderName;
 import nor.http.HttpHeader;
 import nor.http.HttpRequest;
 import nor.http.HttpResponse;
+import nor.http.Status;
 import nor.util.FixedSizeMap;
 
 public class ManagementArticles extends Plugin{
@@ -131,7 +132,7 @@ public class ManagementArticles extends Plugin{
 					@Override
 					public void update(final HttpResponse msg, final MatchResult url, final MatchResult cType, final FilterRegister register) {
 
-						if(msg.getCode() == 200){
+						if(msg.getStatus() == Status.OK){
 
 							try{
 
@@ -183,7 +184,7 @@ public class ManagementArticles extends Plugin{
 					@Override
 					public void update(final HttpResponse msg, final MatchResult url, final MatchResult cType, final FilterRegister register) {
 
-						if(msg.getCode() == 200){
+						if(msg.getStatus() == Status.OK){
 
 							final ReadonlyPatternMatchingFilter f = new ReadonlyPatternMatchingFilter();
 							f.addEventListener("\"ktitle=([^\"]+)\"", new MatchingEventListener(){
@@ -208,7 +209,7 @@ public class ManagementArticles extends Plugin{
 					@Override
 					public void update(final HttpResponse msg, final MatchResult url, final MatchResult cType, final FilterRegister register) {
 
-						if(msg.getCode() == 200){
+						if(msg.getStatus() == Status.OK){
 
 							try{
 
@@ -236,7 +237,7 @@ public class ManagementArticles extends Plugin{
 					@Override
 					public void update(final HttpResponse msg, final MatchResult url, final MatchResult cType, final FilterRegister register) {
 
-						if(msg.getCode() == 200){
+						if(msg.getStatus() == Status.OK){
 
 							final ReadonlyPatternMatchingFilter f = new ReadonlyPatternMatchingFilter();
 							f.addEventListener("<title>(.*)</title>", new MatchingEventListener() {
@@ -271,7 +272,7 @@ public class ManagementArticles extends Plugin{
 					@Override
 					public void update(final HttpResponse msg, final MatchResult url, final MatchResult cType, final FilterRegister register) {
 
-						if(msg.getCode() == 200){
+						if(msg.getStatus() == Status.OK){
 
 							try{
 
