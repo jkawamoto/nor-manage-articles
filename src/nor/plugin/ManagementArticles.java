@@ -28,6 +28,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import nor.core.Nor;
 import nor.core.plugin.Plugin;
 import nor.core.proxy.filter.FilterRegister;
 import nor.core.proxy.filter.ReadonlyPatternMatchingFilter;
@@ -41,6 +42,7 @@ import nor.http.HeaderName;
 import nor.http.HttpHeader;
 import nor.http.HttpRequest;
 import nor.http.HttpResponse;
+import nor.http.Method;
 import nor.http.Status;
 import nor.util.FixedSizeMap;
 
@@ -84,7 +86,8 @@ public class ManagementArticles extends Plugin{
 	private final Map<String, String> acmTitle = new FixedSizeMap<String, String>(20);
 
 	@Override
-	public void init() {
+	public void load(final File conf) {
+		super.load(conf);
 
 		if(!this.properties.containsKey("folder")){
 
@@ -159,16 +162,23 @@ public class ManagementArticles extends Plugin{
 
 					private String getTitle(final URL url, final Pattern pat) throws IOException{
 
-						final InputStream in = ManagementArticles.this.openConnection(url).getInputStream();
-						final BufferedReader rin = new BufferedReader(new InputStreamReader(in));
-						for(String buf = rin.readLine(); buf != null; buf = rin.readLine()){
+						final HttpRequest req = new HttpRequest(Method.GET, url);
+						final HttpResponse res = Nor.request(req);
+						if(res.getStatus() == Status.OK){
 
-							final Matcher m = pat.matcher(buf);
-							if(m.find()){
+							final InputStream in = res.getBody().getStream();
+							final BufferedReader rin = new BufferedReader(new InputStreamReader(in));
+							for(String buf = rin.readLine(); buf != null; buf = rin.readLine()){
 
-								return m.group(1);
+								final Matcher m = pat.matcher(buf);
+								if(m.find()){
+
+									return m.group(1);
+
+								}
 
 							}
+
 
 						}
 
