@@ -166,7 +166,7 @@ public class ManagementArticles extends Plugin{
 						final HttpResponse res = Nor.request(req);
 						if(res.getStatus() == Status.OK){
 
-							final InputStream in = res.getBody().getStream();
+							final InputStream in = res.getBody();
 							final BufferedReader rin = new BufferedReader(new InputStreamReader(in));
 							for(String buf = rin.readLine(); buf != null; buf = rin.readLine()){
 
