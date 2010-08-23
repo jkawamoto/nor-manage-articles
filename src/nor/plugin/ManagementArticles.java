@@ -19,11 +19,14 @@ package nor.plugin;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,14 +83,34 @@ public class ManagementArticles extends Plugin{
 	private static final Pattern PDF = Pattern.compile("pdf");
 	private static final Pattern HTML = Pattern.compile("html");
 
+	private final Properties properties = new Properties();
 	private File dir;
 
 	private final Map<String, String> springerTitle = new FixedSizeMap<String, String>(20);
 	private final Map<String, String> acmTitle = new FixedSizeMap<String, String>(20);
 
 	@Override
-	public void load(final File conf) {
-		super.load(conf);
+	public void init(final File conf) {
+
+		if(conf.exists()){
+
+			try {
+
+				this.properties.load(new FileReader(conf));
+
+			} catch (FileNotFoundException e) {
+
+				// TODO 自動生成された catch ブロック
+				e.printStackTrace();
+
+			} catch (IOException e) {
+
+				// TODO 自動生成された catch ブロック
+				e.printStackTrace();
+
+			}
+
+		}
 
 		if(!this.properties.containsKey("folder")){
 
