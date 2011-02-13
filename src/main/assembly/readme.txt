@@ -1,4 +1,4 @@
-ManagementArticlePlugin
+ManagementArticlePlugin version 0.1
 =================================
 
 概要
@@ -13,11 +13,14 @@ Version 0.1 では，以下のサイトからダウンロードした PDF ファ
 将来的には，検索機能を提供する予定です．
 
 
-コンパイル
+
+使い方
 ---------------------------------
-Maven2 を用いてこのプロジェクトをコンパイルするためには，
-次のプラグインが必要です．
-- serviceloader-maven-plugin: https://github.com/francisdb/serviceloader-maven-plugin
+ダウンロードした，ManagementArticlesPlugin.jar を plugin フォルダに追加してください．
+設定ファイルは nor.plugin.ManagementArticles.conf で，設定可能な項目は次の通りです．
+
+ * folder ダウンロードした PDF ファイルの保存先
+
 
 
 ライセンス

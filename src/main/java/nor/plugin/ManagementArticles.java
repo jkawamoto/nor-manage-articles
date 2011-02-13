@@ -19,20 +19,23 @@ package nor.plugin;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import nor.core.Nor;
-import nor.core.plugin.Plugin;
+import nor.core.plugin.PluginAdapter;
 import nor.core.proxy.filter.FilterRegister;
 import nor.core.proxy.filter.ReadonlyPatternMatchingFilter;
 import nor.core.proxy.filter.ReadonlyPatternMatchingFilter.MatchingEventListener;
@@ -48,8 +51,10 @@ import nor.http.HttpResponse;
 import nor.http.Method;
 import nor.http.Status;
 import nor.util.FixedSizeMap;
+import nor.util.io.Stream;
+import nor.util.log.Logger;
 
-public class ManagementArticles extends Plugin{
+public class ManagementArticles extends PluginAdapter{
 
 	/*
 	 * CiteSeerX
@@ -89,32 +94,34 @@ public class ManagementArticles extends Plugin{
 	private final Map<String, String> springerTitle = new FixedSizeMap<String, String>(20);
 	private final Map<String, String> acmTitle = new FixedSizeMap<String, String>(20);
 
+	private final static Logger LOGGER = Logger.getLogger(ManagementArticles.class);
+
 	@Override
-	public void init(final File conf) {
+	public void init(final File common, final File local) throws IOException {
+		LOGGER.entering("init", common, local);
 
-		if(conf.exists()){
+		if(!common.exists()){
 
-			try {
+			final InputStream in = this.getClass().getResourceAsStream("default.conf");
+			final OutputStream out = new FileOutputStream(common);
 
-				this.properties.load(new FileReader(conf));
+			Stream.copy(in, out);
 
-			} catch (FileNotFoundException e) {
-
-				// TODO 自動生成された catch ブロック
-				e.printStackTrace();
-
-			} catch (IOException e) {
-
-				// TODO 自動生成された catch ブロック
-				e.printStackTrace();
-
-			}
-
+			out.close();
+			in.close();
 		}
+		final Reader r = new FileReader(common);
+		this.properties.load(r);
+		r.close();
 
-		if(!this.properties.containsKey("folder")){
+		if(local.exists()){
 
-			this.properties.setProperty("folder", "./cache/pdf/");
+			final Properties localProp = new Properties();
+			final Reader localIn = new FileReader(local);
+			localProp.load(localIn);
+			localIn.close();
+
+			this.properties.putAll(localProp);
 
 		}
 
@@ -123,6 +130,7 @@ public class ManagementArticles extends Plugin{
 
 		StoringToFileFilter.deleteTemplaryFiles(this.dir);
 
+		LOGGER.exiting("init");
 	}
 
 	@Override
@@ -133,12 +141,16 @@ public class ManagementArticles extends Plugin{
 				new RequestFilterAdapter(Springer, PDF){
 
 					@Override
-					public void update(final HttpRequest msg, final MatchResult url, final MatchResult cType, final FilterRegister register) {
+					public void update(final HttpRequest msg,
+							final MatchResult url, final MatchResult cType, final FilterRegister register) {
+
+						LOGGER.entering(this.getClass(), "update", msg, url, cType, register);
 
 						final HttpHeader header = msg.getHeader();
 						header.remove(HeaderName.Range);
 						header.remove(HeaderName. IfRange);
 
+						LOGGER.exiting(this.getClass(), "update");
 					}
 
 				}
@@ -156,7 +168,10 @@ public class ManagementArticles extends Plugin{
 				new ResponseFilterAdapter(CiteSeerX, PDF){
 
 					@Override
-					public void update(final HttpResponse msg, final MatchResult url, final MatchResult cType, final FilterRegister register) {
+					public void update(final HttpResponse msg,
+							final MatchResult url, final MatchResult cType, final FilterRegister register) {
+
+						LOGGER.entering(this.getClass(), "update", msg, url, cType, register);
 
 						if(msg.getStatus() == Status.OK){
 
@@ -175,12 +190,13 @@ public class ManagementArticles extends Plugin{
 
 							}catch(final IOException e){
 
-								e.printStackTrace();
+								LOGGER.catched(Level.WARNING, this.getClass(), "update", e);
 
 							}
 
 						}
 
+						LOGGER.exiting(this.getClass(), "update");
 					}
 
 					private String getTitle(final URL url, final Pattern pat) throws IOException{
@@ -215,7 +231,10 @@ public class ManagementArticles extends Plugin{
 				new ResponseFilterAdapter(SpringerSite, HTML){
 
 					@Override
-					public void update(final HttpResponse msg, final MatchResult url, final MatchResult cType, final FilterRegister register) {
+					public void update(final HttpResponse msg,
+							final MatchResult url, final MatchResult cType, final FilterRegister register) {
+
+						LOGGER.entering(this.getClass(), "update", msg, url, cType, register);
 
 						if(msg.getStatus() == Status.OK){
 
@@ -233,6 +252,7 @@ public class ManagementArticles extends Plugin{
 
 						}
 
+						LOGGER.exiting(this.getClass(), "update");
 					}
 
 				},
@@ -240,7 +260,10 @@ public class ManagementArticles extends Plugin{
 				new ResponseFilterAdapter(Springer, PDF){
 
 					@Override
-					public void update(final HttpResponse msg, final MatchResult url, final MatchResult cType, final FilterRegister register) {
+					public void update(final HttpResponse msg,
+							final MatchResult url, final MatchResult cType, final FilterRegister register) {
+
+						LOGGER.entering(this.getClass(), "update", msg, url, cType, register);
 
 						if(msg.getStatus() == Status.OK){
 
@@ -255,12 +278,13 @@ public class ManagementArticles extends Plugin{
 
 							}catch(final IOException e){
 
-								e.printStackTrace();
+								LOGGER.catched(Level.WARNING, this.getClass(), "update", e);
 
 							}
 
 						}
 
+						LOGGER.exiting(this.getClass(), "update");
 					}
 
 				},
@@ -268,7 +292,10 @@ public class ManagementArticles extends Plugin{
 				new ResponseFilterAdapter(ACMSite, HTML){
 
 					@Override
-					public void update(final HttpResponse msg, final MatchResult url, final MatchResult cType, final FilterRegister register) {
+					public void update(final HttpResponse msg,
+							final MatchResult url, final MatchResult cType, final FilterRegister register) {
+
+						LOGGER.entering(this.getClass(), "update", msg, url, cType, register);
 
 						if(msg.getStatus() == Status.OK){
 
@@ -296,6 +323,7 @@ public class ManagementArticles extends Plugin{
 
 						}
 
+						LOGGER.exiting(this.getClass(), "update");
 					}
 
 				},
@@ -303,7 +331,10 @@ public class ManagementArticles extends Plugin{
 				new ResponseFilterAdapter(ACM, PDF) {
 
 					@Override
-					public void update(final HttpResponse msg, final MatchResult url, final MatchResult cType, final FilterRegister register) {
+					public void update(final HttpResponse msg,
+							final MatchResult url, final MatchResult cType, final FilterRegister register) {
+
+						LOGGER.entering(this.getClass(), "update", "update", msg, url, cType,register);
 
 						if(msg.getStatus() == Status.OK){
 
@@ -317,12 +348,13 @@ public class ManagementArticles extends Plugin{
 
 							}catch(final IOException e){
 
-								e.printStackTrace();
+								LOGGER.catched(Level.WARNING, "update", e);
 
 							}
 
 						}
 
+						LOGGER.exiting(this.getClass(), "update");
 					}
 
 				}
@@ -330,6 +362,5 @@ public class ManagementArticles extends Plugin{
 		};
 
 	}
-
 
 }
