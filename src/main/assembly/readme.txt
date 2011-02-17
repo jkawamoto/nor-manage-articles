@@ -1,10 +1,10 @@
-ManagementArticlePlugin version 0.1
+ManagementArticlePlugin version 0.2.1
 =================================
 
 概要
 ---------------------------------
 論文 PDF を管理するプラグインです．
-Version 0.1 では，以下のサイトからダウンロードした PDF ファイルを論文タイトル名で指定フォルダに保存します．
+Version 0.2 では，以下のサイトからダウンロードした PDF ファイルを論文タイトル名で指定フォルダに保存します．
 
  * CiteSeerX: http://citeseerx.ist.psu.edu/
  * Springer: http://www.springerlink.com/

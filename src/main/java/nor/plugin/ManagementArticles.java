@@ -109,6 +109,7 @@ public class ManagementArticles extends PluginAdapter{
 
 			out.close();
 			in.close();
+
 		}
 		final Reader r = new FileReader(common);
 		this.properties.load(r);
@@ -202,7 +203,7 @@ public class ManagementArticles extends PluginAdapter{
 					private String getTitle(final URL url, final Pattern pat) throws IOException{
 
 						final HttpRequest req = new HttpRequest(Method.GET, url);
-						final HttpResponse res = Nor.request(req);
+						final HttpResponse res = Nor.getRequestHandler().doRequest(req);
 						if(res.getStatus() == Status.OK){
 
 							final InputStream in = res.getBody();
