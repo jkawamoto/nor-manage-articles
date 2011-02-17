@@ -4,7 +4,7 @@
 	<groupId>nor</groupId>
 	<artifactId>ManagementArticlesPlugin</artifactId>
 	<name>ManagementArticlesPlugin</name>
-	<version>0.2.20110214</version>
+	<version>0.2.1</version>
 
 	<build>
 
@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>nor</groupId>
 			<artifactId>nor</artifactId>
-			<version>0.2.2.20110214</version>
+			<version>0.3.0</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
